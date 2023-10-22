@@ -1,0 +1,7 @@
+{
+  "name": "bookman",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
