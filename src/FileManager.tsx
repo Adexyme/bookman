@@ -27,7 +27,7 @@ const FileManager = (props: IFProps) => {
     const pdf = await blob.arrayBuffer();
     var loadingTask = pdfjsLib.getDocument(pdf);
     await loadingTask.promise.then((pdf) => {
-      //PageDisplayManager.currentPdf = pdf;
+      PageDisplayManager.currentPdf = pdf;
       props.setPdfObj(pdf);
     });
     console.log("handleClick2");

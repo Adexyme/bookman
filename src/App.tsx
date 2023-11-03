@@ -42,7 +42,12 @@ function App() {
         </HeaderLine2>
       </Header>
       <TableOfContent />
-      <Body mode={pageMode} pdfObj={pdfObj} toggleState={toggleState} />
+      <Body
+        mode={pageMode}
+        pdfObj={pdfObj}
+        toggleState={toggleState}
+        pageCnt={pdfObj?.numPages}
+      />
       <Footer />
     </>
   );
