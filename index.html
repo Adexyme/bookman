@@ -3,12 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link
+      href="//mozilla.github.io/pdf.js/web/viewer.css"
+      rel="stylesheet"
+      type="text/css"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/src/assets/icofont/icofont.min.css?456776" />
     <title>Vite + React + TS</title>
     <style>
       body {
         overflow-anchor: auto;
+      }
+      .pageContainer {
+        position: relative;
+        top: 0;
+        left: 0;
+      }
+
+      [id^="tl_"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+        opacity: 0.2;
+        line-height: 1;
+      }
+
+      [id^="tl_"] > span {
+        color: transparent;
+        position: absolute;
+        white-space: pre;
+        cursor: text;
+        transform-origin: 0% 0%;
       }
     </style>
   </head>

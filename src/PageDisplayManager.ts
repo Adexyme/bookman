@@ -1,4 +1,5 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
+import * as pdfjsLib from "pdfjs-dist";
 class PageDisplayManager {
   public static currentPdf: PDFDocumentProxy | null = null;
   public static displayStackLenght: number = 101; //the number of pages displayed per time
@@ -152,11 +153,33 @@ class PageDisplayManager {
           outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
 
         if (ctx)
-          page.render({
-            canvasContext: ctx,
-            transform: [outputScale, 0, 0, outputScale, 0, 0],
-            viewport: viewport,
-          });
+          page
+            .render({
+              canvasContext: ctx,
+              transform: [outputScale, 0, 0, outputScale, 0, 0],
+              viewport: viewport,
+            })
+            .promise.then(function () {
+              return page.getTextContent();
+            })
+            .then(function (textContent) {
+              // Assign CSS to the textLayer element
+              var textLayer = document.getElementById("tl_" + pageNo);
+              if (textLayer && canvas) {
+                textLayer.style.left = canvas.offsetLeft + "px";
+                textLayer.style.top = canvas.offsetTop + "px";
+                textLayer.style.height = canvas.offsetHeight + "px";
+                textLayer.style.width = canvas.offsetWidth + "px";
+              }
+
+              // Pass the data to the method for rendering of text over the pdf canvas.
+              pdfjsLib.renderTextLayer({
+                textContent: textContent,
+                container: textLayer!,
+                viewport: viewport,
+                textDivs: [],
+              });
+            });
       }
     });
   };
