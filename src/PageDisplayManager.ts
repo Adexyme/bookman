@@ -165,11 +165,19 @@ class PageDisplayManager {
             .then(function (textContent) {
               // Assign CSS to the textLayer element
               var textLayer = document.getElementById("tl_" + pageNo);
+
               if (textLayer && canvas) {
                 textLayer.style.left = canvas.offsetLeft + "px";
                 textLayer.style.top = canvas.offsetTop + "px";
                 textLayer.style.height = canvas.offsetHeight + "px";
                 textLayer.style.width = canvas.offsetWidth + "px";
+                //const container = document.getElementById("your-container-id");
+                var viewportScale = viewport.scale;
+
+                textLayer.style.setProperty(
+                  "--scale-factor",
+                  "" + viewportScale
+                );
               }
 
               // Pass the data to the method for rendering of text over the pdf canvas.
@@ -180,6 +188,42 @@ class PageDisplayManager {
                 textDivs: [],
               });
             });
+        /*.then(function () {
+              // Returns a promise, on resolving it will return annotation data of page
+              return page.getAnnotations();
+            })
+            .then(function (annotationData) {
+              var annotationElem = document.getElementById("annotation-layer");
+
+              // Canvas offset
+              if (canvas && annotationElem) {
+                var canvas_offset = canvas.getBoundingClientRect();
+
+                // Canvas height
+                var canvas_height = canvas.offsetHeight;
+
+                // Canvas width
+
+                var canvas_width = canvas.offsetWidth;
+
+                // CSS for annotation layer
+                annotationElem.style.left = canvas_offset.left + "px";
+                annotationElem.style.top = canvas_offset.top + "px";
+                annotationElem.style.height = canvas_height + "px";
+                annotationElem.style.width = canvas_width + "px";
+
+                var annotationLayer =
+                  document.getElementById("annotation-layer");
+
+                // Render the annotation layer
+                pdfjsLib.AnnotationLayer.render({
+                  viewport: viewport.clone({ dontFlip: true }),
+                  div: annotationLayer,
+                  annotations: annotationData,
+                  page: page,
+                });
+              }
+            });*/
       }
     });
   };

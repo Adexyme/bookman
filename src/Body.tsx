@@ -193,6 +193,7 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
                     {toggleState}
                   </canvas>
                   <div key={"ktl_" + value} id={"tl_" + value}></div>
+                  <div key={"kal_" + value} id={"al_" + value}></div>
                 </div>
               </>
             );
