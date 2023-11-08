@@ -37,13 +37,12 @@ const FileManager = (props: IFProps) => {
     <>
       <a
         id="pick-file"
-        href="#"
         className="w3-bar-item w3-button  w3-border-left "
         onClick={handleClick}
       >
         <i className="icofont-folder-open   w3-round "></i>
       </a>
-      <a href="#" className="w3-bar-item w3-button  w3-border-right ">
+      <a className="w3-bar-item w3-button  w3-border-right ">
         <i className="icofont-save    w3-round "></i>
       </a>
     </>

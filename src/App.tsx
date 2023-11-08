@@ -19,14 +19,17 @@ function App() {
   const [pageMode, setPageMode] = useState<"up" | "down" | "load" | null>(null);
   const [pdfObj, setPdfObj] = useState(PageDisplayManager.currentPdf);
   const [toggleState, setToggleState] = useState(true);
+  const [currentPage, setCurrentPage] = useState(
+    PageDisplayManager.currentPage
+  );
 
   const updatePdfObj = (pdfObj: PDFDocumentProxy) => {
-    console.log("inside updatePdfObj1");
     setPdfObj(pdfObj);
     setPageMode("load");
     setToggleState(!toggleState);
-    console.log("pageMode :" + pageMode);
-    console.log("inside updatePdfObj2");
+  };
+  const updateCurrentPage = () => {
+    setCurrentPage(PageDisplayManager.currentPage);
   };
   return (
     <>
@@ -37,11 +40,17 @@ function App() {
           <RotationManager />
           <DisplayTypeManager />
           <ZoomManager />
-          <PageNavigationManager />
+          <PageNavigationManager
+            pageCnt={pdfObj?.numPages}
+            currentPage={currentPage}
+          />
           <SearchManager />
         </HeaderLine2>
       </Header>
-      <TableOfContent />
+      <TableOfContent
+        toggleState={toggleState}
+        updateCurrentPage={() => updateCurrentPage()}
+      />
       <Body
         mode={pageMode}
         pdfObj={pdfObj}

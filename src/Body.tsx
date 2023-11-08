@@ -16,7 +16,7 @@ interface Props {
   toggleState: boolean;
   pageCnt: number | undefined;
 }
-pdfjsLib.GlobalWorkerOptions.workerSrc = "/src/pdfJSworker.js";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "/src/pdf.worker.2.11.338.js";
 
 const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
   var myState = {
@@ -30,10 +30,19 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
     PageDisplayManager.displayStackLenght
   );
   useEffect(() => {
+    PageDisplayManager.currentPdf?.getOutline().then((outline) => {
+      console.log("ouline: " + JSON.stringify(outline));
+    });
+    PageDisplayManager.currentPdf?.getDestination("276").then((destination) => {
+      console.log("destination: " + JSON.stringify(destination));
+    });
+
+    //PageDisplayManager.currentPdf?.getPageIndex();
     console.log("inside useEffect");
     console.log("mode: " + mode);
     if (mode === "load") {
       console.log("mode === load");
+      PageDisplayManager.createPageNoRefMap(pdfObj!);
       const tPage =
         pdfObj!.numPages <= PageDisplayManager.displayStackLenght
           ? pdfObj!.numPages
@@ -42,6 +51,7 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
         //console.log("n :" + n);
         PageDisplayManager.displayPages(pdfObj!, n + 1);
       }
+
       if (pdfObj!.numPages > PageDisplayManager.displayStackLenght) {
         window.addEventListener("scroll", function handleScroll(event) {
           const displayStackFirstPageElem = document.getElementById(
@@ -70,8 +80,8 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
           if (window.scrollY < PageDisplayManager.lastScrollPosition) {
             console.log("scrolling down");
             if (
-              displayStackFirstPageElem_position.top >= -200 &&
-              displayStackFirstPageElem_position.top <= 200
+              displayStackFirstPageElem_position.bottom >= -200 &&
+              displayStackFirstPageElem_position.bottom <= 200
             ) {
               // fully visible
               console.log("Element Visible - down");
@@ -92,20 +102,10 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
                     ? PageDisplayManager.displayStackFirstPage - 1
                     : PageDisplayManager.displayStackAdjustmentNumber;
 
-                PageDisplayManager.adjustDisplayStack(
-                  displayStackAdjustmentFactor,
-                  PageDisplayManager.displayStackFirstPage,
-                  PageDisplayManager.displayStackLastPage,
-                  "d"
+                PageDisplayManager.handleScroll(
+                  "d",
+                  displayStackAdjustmentFactor
                 );
-
-                PageDisplayManager.displayStackFirstPage =
-                  PageDisplayManager.displayStackFirstPage -
-                  displayStackAdjustmentFactor;
-
-                PageDisplayManager.displayStackLastPage =
-                  PageDisplayManager.displayStackLastPage -
-                  displayStackAdjustmentFactor;
               }
             }
           } else if (
@@ -139,20 +139,10 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
                       PageDisplayManager.displayStackLastPage
                     : PageDisplayManager.displayStackAdjustmentNumber;
 
-                PageDisplayManager.adjustDisplayStack(
-                  displayStackAdjustmentFactor,
-                  PageDisplayManager.displayStackFirstPage,
-                  PageDisplayManager.displayStackLastPage,
-                  "u"
+                PageDisplayManager.handleScroll(
+                  "u",
+                  displayStackAdjustmentFactor
                 );
-
-                PageDisplayManager.displayStackFirstPage =
-                  PageDisplayManager.displayStackFirstPage +
-                  displayStackAdjustmentFactor;
-
-                PageDisplayManager.displayStackLastPage =
-                  PageDisplayManager.displayStackLastPage +
-                  displayStackAdjustmentFactor;
               }
             }
           }
@@ -193,7 +183,11 @@ const Body = ({ mode, pdfObj, toggleState, pageCnt }: Props) => {
                     {toggleState}
                   </canvas>
                   <div key={"ktl_" + value} id={"tl_" + value}></div>
-                  <div key={"kal_" + value} id={"al_" + value}></div>
+                  <div
+                    key={"kal_" + value}
+                    id={"al_" + value}
+                    className="w3-hide "
+                  ></div>
                 </div>
               </>
             );

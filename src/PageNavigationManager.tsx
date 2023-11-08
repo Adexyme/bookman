@@ -1,10 +1,15 @@
-const PageNavigationManager = () => {
+interface Props {
+  pageCnt: number | undefined;
+  currentPage: number;
+}
+
+const PageNavigationManager = (prop: Props) => {
   return (
     <>
-      <a href="#" className="w3-bar-item w3-button w3-grey ">
+      <a className="w3-bar-item w3-button w3-grey ">
         <i className="icofont-arrow-left   w3-round  w3-border "></i>
-        <input style={{ maxWidth: "10vw" }} value="1" />/
-        <label className="i">200</label>
+        <input style={{ maxWidth: "10vw" }} value={prop.currentPage} />
+        <label className="i w3-margin-rightX ">{prop.pageCnt}</label>
         <i className="icofont-arrow-right   w3-round  w3-border "></i>
       </a>
     </>
