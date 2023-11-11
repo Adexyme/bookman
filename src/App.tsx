@@ -56,6 +56,7 @@ function App() {
         pdfObj={pdfObj}
         toggleState={toggleState}
         pageCnt={pdfObj?.numPages}
+        updateCurrentPage={updateCurrentPage}
       />
       <Footer />
     </>

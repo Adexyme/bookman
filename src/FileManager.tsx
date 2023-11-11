@@ -16,21 +16,21 @@ import IFProps from "./IFileManagerProp";
 pdfjsLib.GlobalWorkerOptions.workerSrc = "/src/pdfJSworker.js";
 
 const FileManager = (props: IFProps) => {
-  console.log("setPdfObj1: " + props.setPdfObj);
+  //console.log("setPdfObj1: " + props.setPdfObj);
   const handleClick = async () => {
-    console.log("handleClick");
-    console.log("setPdfObj: " + props.setPdfObj);
+    //console.log("handleClick");
+    //console.log("setPdfObj: " + props.setPdfObj);
     const blob = await fileOpen({
       mimeTypes: ["application/pdf"],
     });
-    console.log("handleClick1");
+    //console.log("handleClick1");
     const pdf = await blob.arrayBuffer();
     var loadingTask = pdfjsLib.getDocument(pdf);
     await loadingTask.promise.then((pdf) => {
       PageDisplayManager.currentPdf = pdf;
       props.setPdfObj(pdf);
     });
-    console.log("handleClick2");
+    //console.log("handleClick2");
   };
 
   return (

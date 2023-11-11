@@ -48,6 +48,7 @@ const TableOfContent = (props: Props) => {
           {tableOfContent.map((value, index) => {
             return (
               <div
+                key={value.title}
                 className="w3-bar-item w3-button w3-border w3-small "
                 onClick={() => {
                   PageDisplayManager.goToPage(value.dest![0].num);

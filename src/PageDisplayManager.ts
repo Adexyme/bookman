@@ -1,12 +1,11 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
 import * as pdfjsLib from "pdfjs-dist";
-import { AnnotationLayer } from "pdfjs-dist";
 
 type pageAddr = { [key: string]: number };
 
 class PageDisplayManager {
   public static currentPdf: PDFDocumentProxy | null = null;
-  public static displayStackLenght: number = 101; //the number of pages displayed per time
+  public static displayStackLenght: number = 5; //the number of pages displayed per time
   //the number corresponding to middle page for the first sets of pages displayed
   public static displayStackMiddlePage: number = Math.ceil(
     PageDisplayManager.displayStackLenght / 2
@@ -14,36 +13,66 @@ class PageDisplayManager {
   public static displayStackFirstPage: number = 1;
   public static displayStackLastPage: number =
     PageDisplayManager.displayStackLenght;
-  public static displayStackAdjustmentNumber: number = 50;
-  public static lastPage: number = 0;
+  public static displayStackAdjustmentNumber: number = Math.floor(
+    PageDisplayManager.displayStackLenght / 2
+  );
+  //public static lastPage: number = 0;
   public static currentPage: number = 1;
-  public static lastScrollPosition: number = 0;
+  //public static lastScrollPosition: number = 0;
   public static pageAddress: any = {};
-  public static observerObject: IntersectionObserver;
-  public static observedElem: HTMLCanvasElement = document.getElementById(
+  //public static observerObject: IntersectionObserver;
+  /*public static observedElem: HTMLCanvasElement = document.getElementById(
     "id_26"
   ) as HTMLCanvasElement;
   public static canvasContainer: HTMLElement = document.getElementById(
     "canvas_container"
-  ) as HTMLElement;
+  ) as HTMLElement;*/
 
-  public static alterObservedElemStatus = (type: "enable" | "disable") => {
-    if (
-      (document.getElementById("canvas_container") as HTMLElement) === undefined
-    ) {
-      return;
+  public static updateDisplayedPageNum = (updateCurrentPage: () => void) => {
+    const pageCnt = PageDisplayManager.currentPdf!.numPages;
+    for (let cnt = 1; cnt <= pageCnt; cnt++) {
+      let pageElem = document.getElementById("pc_" + cnt);
+      let pageElem_position = pageElem!.getBoundingClientRect();
+      if (pageElem_position.top < window.innerHeight / 2) {
+        PageDisplayManager.currentPage = cnt;
+        updateCurrentPage(); //update the displayed current page
+      }
     }
-    const elemChildren = (
-      document.getElementById("canvas_container") as HTMLElement
-    ).children;
-    const elemCnt = elemChildren.length;
-    for (var cnt = 0; cnt < elemCnt; cnt++) {
-      if (type === "enable") {
-        PageDisplayManager.observerObject.observe(elemChildren[cnt]);
-        console.log("enabled: " + cnt);
-      } else if (type === "disable") {
-        PageDisplayManager.observerObject.unobserve(elemChildren[cnt]);
-        console.log("disabled: " + cnt);
+  };
+
+  public static updateDisplayStack = () => {
+    const pageCnt = PageDisplayManager.currentPdf!.numPages;
+
+    PageDisplayManager.displayStackFirstPage =
+      PageDisplayManager.currentPage -
+        PageDisplayManager.displayStackAdjustmentNumber <=
+      0
+        ? 1
+        : PageDisplayManager.currentPage -
+          PageDisplayManager.displayStackAdjustmentNumber;
+
+    PageDisplayManager.displayStackLastPage =
+      PageDisplayManager.currentPage +
+        PageDisplayManager.displayStackAdjustmentNumber >
+      pageCnt
+        ? PageDisplayManager.currentPdf!.numPages
+        : PageDisplayManager.currentPage +
+          PageDisplayManager.displayStackAdjustmentNumber;
+
+    for (let cnt = 1; cnt <= pageCnt; cnt++) {
+      //let pageContainer = document.getElementById("pc_" + cnt);
+      let pageCanvas = document.getElementById("id_" + cnt);
+      //let pageTxtLayer = document.getElementById("tl_" + cnt);
+      if (
+        cnt < PageDisplayManager.displayStackFirstPage ||
+        cnt > PageDisplayManager.displayStackLastPage
+      ) {
+        pageCanvas!.innerHTML = "";
+        //pageTxtLayer!.innerHTML = ""; //update the displayed current page
+      } else {
+        if (!pageCanvas!.getAttribute("width")) {
+          PageDisplayManager.displayPages(PageDisplayManager.currentPdf!, cnt);
+        }
       }
     }
   };
@@ -60,102 +89,15 @@ class PageDisplayManager {
     }
     return elemArr;
   };
-  private static scrollDownPagesReAdjustment = (
-    displayStackAdjustmentFactor: number,
-    displayStack1stPage: number,
-    displayStackLastPage: number
-  ) => {
-    for (let n = 0; n < displayStackAdjustmentFactor; n++) {
-      const oldElem = document.getElementById(
-        "id_" + (displayStackLastPage - n)
-      );
 
-      const newElem = document.createElement("canvas");
-      newElem.innerHTML = `${displayStackLastPage - n}`;
-      newElem.id = "id_" + (displayStackLastPage - n);
-      oldElem?.replaceWith(newElem);
-
-      PageDisplayManager.displayPages(
-        PageDisplayManager.currentPdf!,
-        displayStack1stPage - 1 - n
-      );
-    }
-  };
-  private static scrollUpPagesReAdjustment = (
-    displayStackAdjustmentFactor: number,
-    displayStack1stPage: number,
-    displayStackLastPage: number
-  ) => {
-    for (let n = 0; n < displayStackAdjustmentFactor; n++) {
-      const oldElem = document.getElementById(
-        "id_" + (n + displayStack1stPage)
-      );
-
-      const newElem = document.createElement("canvas");
-      newElem.innerHTML = `${n + displayStack1stPage}`;
-      newElem.id = "id_" + (n + displayStack1stPage);
-      oldElem?.replaceWith(newElem);
-
-      PageDisplayManager.displayPages(
-        PageDisplayManager.currentPdf!,
-        displayStackLastPage + 1 + n
-      );
-    }
-  };
-  public static adjustDisplayStack = (
-    displayStackAdjustmentFactor: number,
-    displayStackStartPage: number,
-    displayStackEndPage: number,
-    scrollDirection: "u" | "d"
-  ) => {
-    if (scrollDirection === "u") {
-      PageDisplayManager.scrollUpPagesReAdjustment(
-        displayStackAdjustmentFactor,
-        displayStackStartPage,
-        displayStackEndPage
-      );
-    } else if (scrollDirection === "d") {
-      PageDisplayManager.scrollDownPagesReAdjustment(
-        displayStackAdjustmentFactor,
-        displayStackStartPage,
-        displayStackEndPage
-      );
-    }
-  };
-
-  public static handleScroll = (
-    scrollDirection: "u" | "d",
-    displayStackAdjustmentFactor: number
-  ) => {
-    PageDisplayManager.adjustDisplayStack(
-      displayStackAdjustmentFactor,
-      PageDisplayManager.displayStackFirstPage,
-      PageDisplayManager.displayStackLastPage,
-      scrollDirection
-    );
-    if (scrollDirection === "d") {
-      PageDisplayManager.displayStackFirstPage =
-        PageDisplayManager.displayStackFirstPage - displayStackAdjustmentFactor;
-
-      PageDisplayManager.displayStackLastPage =
-        PageDisplayManager.displayStackLastPage - displayStackAdjustmentFactor;
-    } else if (scrollDirection === "u") {
-      PageDisplayManager.displayStackFirstPage =
-        PageDisplayManager.displayStackFirstPage + displayStackAdjustmentFactor;
-
-      PageDisplayManager.displayStackLastPage =
-        PageDisplayManager.displayStackLastPage + displayStackAdjustmentFactor;
-    }
-  };
   public static goToPage = (pageRef: number) => {
-    console.log("pageRef: " + pageRef);
+    //console.log("pageRef: " + pageRef);
     let page = PageDisplayManager.pageAddress["pa_" + pageRef];
-    console.log("page: " + page);
+    //console.log("page: " + page);
     //console.log("Am In Page No" + PageDisplayManager.pageAddress["pa_" + page]);
-    console.log(`${page} >= ${PageDisplayManager.displayStackFirstPage} &&
-      ${page} <= ${PageDisplayManager.displayStackLastPage}`);
+
     if (!page) {
-      console.log("page undefined");
+      //console.log("page undefined");
       return;
     }
     if (
@@ -165,53 +107,20 @@ class PageDisplayManager {
       (page >= PageDisplayManager.displayStackFirstPage &&
         page <= PageDisplayManager.displayStackLastPage)
     ) {
-      console.log("page1: " + page);
+      //console.log("page1: " + page);
       //let page2Visit = PageDisplayManager.pageAddress["pa_" + page];
       location.assign("#id_" + page);
       PageDisplayManager.currentPage = page;
-    } else if (page <= PageDisplayManager.displayStackFirstPage) {
-      console.log("page2: " + page);
-      const displayStackAdjustmentFactor =
-        PageDisplayManager.displayStackFirstPage -
-        page +
-        (page - 1 < PageDisplayManager.displayStackAdjustmentNumber
-          ? page - 1
-          : PageDisplayManager.displayStackAdjustmentNumber);
-
-      PageDisplayManager.handleScroll("d", displayStackAdjustmentFactor);
-    } else if (page >= PageDisplayManager.displayStackLastPage) {
-      console.log("page3: " + page);
-      const displayStackAdjustmentFactor =
-        page -
-        PageDisplayManager.displayStackLastPage +
-        (PageDisplayManager.currentPdf!.numPages - page <
-        PageDisplayManager.displayStackAdjustmentNumber
-          ? PageDisplayManager.currentPdf!.numPages - page
-          : PageDisplayManager.displayStackAdjustmentNumber);
-
-      PageDisplayManager.handleScroll("u", displayStackAdjustmentFactor);
     }
-    //location.assign("#id_" + page);
   };
   public static createPageNoRefMap = (pdf: PDFDocumentProxy) => {
     for (let cnt = 1; cnt <= pdf.numPages; cnt++) {
       pdf.getPage(cnt).then((page) => {
-        console.log("page-ref: " + JSON.stringify(page.ref));
-        console.log("page-_pageIndex: " + page._pageIndex);
-        console.log("page-_pageInfo: " + JSON.stringify(page._pageInfo));
-        const varHolder = "pd" + page.ref!.num;
-
         if (PageDisplayManager.pageAddress)
           PageDisplayManager.pageAddress["pa_" + page.ref!.num] =
             page._pageIndex + 1;
-        //console.log("page-ref: " + page.getAnnotations);
-        //PageDisplayManager.currentPdf?.getOutline
-        //PageDisplayManager.currentPdf?.getPageIndex(page.ref!);
       });
     }
-    console.log(
-      "pageAddress: " + JSON.stringify(PageDisplayManager.pageAddress)
-    );
   };
   public static displayPages = (pdf: PDFDocumentProxy, pageNo: number) => {
     pdf
@@ -220,7 +129,7 @@ class PageDisplayManager {
         //page.render;
 
         var outputScale = window.devicePixelRatio || 1;
-        console.log("id: " + "id_" + pageNo);
+        //console.log("id: " + "id_" + pageNo);
         var canvas = document.getElementById("id_" + pageNo);
         if (canvas) {
           var ctx = (canvas as HTMLCanvasElement).getContext("2d");
