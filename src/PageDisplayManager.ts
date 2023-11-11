@@ -40,6 +40,13 @@ class PageDisplayManager {
     }
   };
 
+  public static clearTextLayer = () => {
+    const pageCnt = PageDisplayManager.currentPdf!.numPages;
+    for (let cnt = 1; cnt <= pageCnt; cnt++) {
+      document.getElementById("tl_" + cnt)!.innerHTML = "";
+    }
+  };
+
   public static updateDisplayStack = () => {
     const pageCnt = PageDisplayManager.currentPdf!.numPages;
 

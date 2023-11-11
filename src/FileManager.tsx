@@ -28,6 +28,7 @@ const FileManager = (props: IFProps) => {
     var loadingTask = pdfjsLib.getDocument(pdf);
     await loadingTask.promise.then((pdf) => {
       PageDisplayManager.currentPdf = pdf;
+
       props.setPdfObj(pdf);
     });
     //console.log("handleClick2");

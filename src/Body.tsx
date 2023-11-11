@@ -41,6 +41,7 @@ const Body = ({
   }
   useEffect(() => {
     if (mode === "load") {
+      PageDisplayManager.clearTextLayer();
       PageDisplayManager.createPageNoRefMap(pdfObj!);
       const totalPageToDisplay =
         pdfObj!.numPages <= PageDisplayManager.displayStackLenght

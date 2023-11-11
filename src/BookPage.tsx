@@ -16,8 +16,12 @@ const BookPage = ({ value, index, toggleState }: Props) => {
         {value}
         {toggleState}
       </canvas>
-      <div key={"ktl_" + value} id={"tl_" + value}></div>
-      <div key={"kal_" + value} id={"al_" + value} className="w3-hide "></div>
+      <div key={"ktl_" + value} id={"tl_" + value}>
+        {toggleState}
+      </div>
+      <div key={"kal_" + value} id={"al_" + value} className="w3-hide ">
+        {toggleState}
+      </div>
     </div>
   );
 };
