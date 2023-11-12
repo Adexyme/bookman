@@ -47,7 +47,9 @@ class PageDisplayManager {
     }
   };
 
-  public static updateDisplayStack = () => {
+  public static updateDisplayStack = (
+    mode?: boolean /*true means redisplay every page, even existing ones*/
+  ) => {
     const pageCnt = PageDisplayManager.currentPdf!.numPages;
 
     PageDisplayManager.displayStackFirstPage =
@@ -68,17 +70,28 @@ class PageDisplayManager {
 
     for (let cnt = 1; cnt <= pageCnt; cnt++) {
       //let pageContainer = document.getElementById("pc_" + cnt);
-      let pageCanvas = document.getElementById("id_" + cnt);
+      let pageCanvas = document.getElementById(
+        "id_" + cnt
+      ) as HTMLCanvasElement;
       //let pageTxtLayer = document.getElementById("tl_" + cnt);
       if (
         cnt < PageDisplayManager.displayStackFirstPage ||
         cnt > PageDisplayManager.displayStackLastPage
       ) {
-        pageCanvas!.innerHTML = "";
-        //pageTxtLayer!.innerHTML = ""; //update the displayed current page
-      } else {
-        if (!pageCanvas!.getAttribute("width")) {
+        if (mode === true && pageCanvas!.getAttribute("width")) {
           PageDisplayManager.displayPages(PageDisplayManager.currentPdf!, cnt);
+        }
+        pageCanvas!.innerHTML = "";
+      } else {
+        if (mode === true) {
+          PageDisplayManager.displayPages(PageDisplayManager.currentPdf!, cnt);
+        } else {
+          if (!pageCanvas!.getAttribute("width")) {
+            PageDisplayManager.displayPages(
+              PageDisplayManager.currentPdf!,
+              cnt
+            );
+          }
         }
       }
     }
@@ -118,6 +131,10 @@ class PageDisplayManager {
       //let page2Visit = PageDisplayManager.pageAddress["pa_" + page];
       location.assign("#id_" + page);
       PageDisplayManager.currentPage = page;
+    } else {
+      PageDisplayManager.currentPage = page;
+      PageDisplayManager.updateDisplayStack();
+      location.assign("#id_" + page);
     }
   };
   public static createPageNoRefMap = (pdf: PDFDocumentProxy) => {

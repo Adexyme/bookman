@@ -31,14 +31,24 @@ const Body = ({
   const [pageCount, setPageCount] = useState(
     PageDisplayManager.displayStackLenght
   );
-  let debounceTimer: number;
+
+  let resizeDebounceTimer: number;
+  function handleResize(event: Event) {
+    window.clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = window.setTimeout(() => {
+      PageDisplayManager.updateDisplayStack(true);
+    }, 1500);
+  }
+
+  let scrollDebounceTimer: number;
   function handleScroll(event: Event) {
     PageDisplayManager.updateDisplayedPageNum(updateCurrentPage);
-    window.clearTimeout(debounceTimer);
-    debounceTimer = window.setTimeout(() => {
+    window.clearTimeout(scrollDebounceTimer);
+    scrollDebounceTimer = window.setTimeout(() => {
       PageDisplayManager.updateDisplayStack();
     }, 250);
   }
+
   useEffect(() => {
     if (mode === "load") {
       PageDisplayManager.clearTextLayer();
@@ -50,6 +60,8 @@ const Body = ({
       for (var n = 0; n < totalPageToDisplay; n++) {
         PageDisplayManager.displayPages(pdfObj!, n + 1);
       }
+
+      window.addEventListener("resize", handleResize);
 
       if (pdfObj!.numPages > PageDisplayManager.displayStackLenght) {
         window.addEventListener("scroll", handleScroll);
