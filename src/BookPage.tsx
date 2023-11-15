@@ -1,10 +1,10 @@
-import React from "react";
+//import React from "react";
 interface Props {
-  value: number | string;
+  value: number | string | unknown;
   index: number | string;
   toggleState: boolean;
 }
-const BookPage = ({ value, index, toggleState }: Props) => {
+const BookPage = ({ value, toggleState }: Props) => {
   return (
     <div
       key={"kpc_" + value}
@@ -14,7 +14,7 @@ const BookPage = ({ value, index, toggleState }: Props) => {
       onLoad={() => console.log("pc_" + value)}
     >
       <canvas key={"k_" + value} id={"id_" + value} style={{ width: "1oo%" }}>
-        {value}
+        {value as number | string}
         {toggleState}
       </canvas>
       <div key={"ktl_" + value} id={"tl_" + value} style={{ width: "1oo%" }}>

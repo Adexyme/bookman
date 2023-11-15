@@ -3,10 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <!--<link rel="icon" type="image/svg+xml" href="/vite.svg" />-->
-
+    <script
+      src="https://cdn.intake-lr.com/LogRocket.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      window.LogRocket && window.LogRocket.init("vqfr3o/bookday");
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/src/assets/icofont/icofont.min.css?456776" />
-    <title>BookMan</title>
+    <title>BookDay</title>
     <style>
       body {
         overflow-anchor: auto;
@@ -40,5 +46,10 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      setTimeout(() => {
+        //document.getElementById("my_pdf_viewer").click();
+      }, 5000);
+    </script>
   </body>
 </html>

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { w3_close } from "./UtiLityFunctions";
-import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
+//import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 import PageDisplayManager from "./PageDisplayManager";
 import { useEffect, useState } from "react";
 interface Props {
@@ -18,13 +19,14 @@ const TableOfContent = (props: Props) => {
       unsafeUrl: string | undefined;
       newWindow: boolean | undefined;
       count: number | undefined;
-      items: any[];
+      items: string[] | number[] | boolean[];
     }[]
   >([]);
   useEffect(() => {
-    PageDisplayManager.currentPdf?.getOutline().then((outline) => {
-      setTableOfContent(outline);
-    });
+    if (PageDisplayManager.currentPdf!)
+      PageDisplayManager.currentPdf!.getOutline().then((outline) => {
+        if (outline) setTableOfContent(outline);
+      });
   }, [props.toggleState]);
   return (
     <>
@@ -45,7 +47,7 @@ const TableOfContent = (props: Props) => {
         </div>
 
         <div className="w3-margin-left w3-margin-right w3-margin-bottom ">
-          {tableOfContent.map((value, index) => {
+          {tableOfContent.map((value /*, index*/) => {
             return (
               <div
                 key={value.title}

@@ -9,7 +9,7 @@ const HeaderLine2 = ({ children }: Props) => {
   return (
     <>
       <div
-        className="w3-bard w3-light-grey w3-center  w3-text-black  "
+        className="w3-bard w3-light-grey w3-center  w3-text-black  w3-tiny "
         style={{ width: "100vw" }}
       >
         {children}

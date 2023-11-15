@@ -1,7 +1,7 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
 import * as pdfjsLib from "pdfjs-dist";
 
-type pageAddr = { [key: string]: number };
+//type pageAddr = { [key: string]: number };
 
 class PageDisplayManager {
   public static currentPdf: PDFDocumentProxy | null = null;
@@ -19,7 +19,7 @@ class PageDisplayManager {
   //public static lastPage: number = 0;
   public static currentPage: number = 1;
   //public static lastScrollPosition: number = 0;
-  public static pageAddress: any = {};
+  public static pageAddress: { [key: string]: number } = {};
   //public static observerObject: IntersectionObserver;
   /*public static observedElem: HTMLCanvasElement = document.getElementById(
     "id_26"
@@ -31,8 +31,8 @@ class PageDisplayManager {
   public static updateDisplayedPageNum = (updateCurrentPage: () => void) => {
     const pageCnt = PageDisplayManager.currentPdf!.numPages;
     for (let cnt = 1; cnt <= pageCnt; cnt++) {
-      let pageElem = document.getElementById("pc_" + cnt);
-      let pageElem_position = pageElem!.getBoundingClientRect();
+      const pageElem = document.getElementById("pc_" + cnt);
+      const pageElem_position = pageElem!.getBoundingClientRect();
       if (pageElem_position.top < window.innerHeight / 2) {
         PageDisplayManager.currentPage = cnt;
         updateCurrentPage(); //update the displayed current page
@@ -43,7 +43,9 @@ class PageDisplayManager {
   public static clearTextLayer = () => {
     const pageCnt = PageDisplayManager.currentPdf!.numPages;
     for (let cnt = 1; cnt <= pageCnt; cnt++) {
-      document.getElementById("tl_" + cnt)!.innerHTML = "";
+      if (document.getElementById("tl_" + cnt)) {
+        document.getElementById("tl_" + cnt)!.innerHTML = "";
+      }
     }
   };
 
@@ -70,7 +72,7 @@ class PageDisplayManager {
 
     for (let cnt = 1; cnt <= pageCnt; cnt++) {
       //let pageContainer = document.getElementById("pc_" + cnt);
-      let pageCanvas = document.getElementById(
+      const pageCanvas = document.getElementById(
         "id_" + cnt
       ) as HTMLCanvasElement;
       //let pageTxtLayer = document.getElementById("tl_" + cnt);
@@ -98,12 +100,12 @@ class PageDisplayManager {
   };
 
   public static loadConsecutivePages = (
-    pageCount: number = PageDisplayManager.displayStackLenght,
-    startPage: number = 1,
+    pageCount: number = PageDisplayManager.displayStackLenght
+    /*startPage: number = 1,
     page2Display: number = 1,
-    callbackFN?: (status: boolean) => any
-  ): any[] => {
-    const elemArr: any[] = [];
+    callbackFN?: (status: boolean) => any*/
+  ): unknown[] => {
+    const elemArr: unknown[] = [];
     for (let n = 0; n < pageCount; n++) {
       elemArr[n] = n + 1;
     }
@@ -112,7 +114,7 @@ class PageDisplayManager {
 
   public static goToPage = (pageRef: number) => {
     //console.log("pageRef: " + pageRef);
-    let page = PageDisplayManager.pageAddress["pa_" + pageRef];
+    const page = PageDisplayManager.pageAddress["pa_" + pageRef];
     //console.log("page: " + page);
     //console.log("Am In Page No" + PageDisplayManager.pageAddress["pa_" + page]);
 
@@ -152,12 +154,12 @@ class PageDisplayManager {
       .then((page) => {
         //page.render;
 
-        var outputScale = window.devicePixelRatio || 1;
+        const outputScale = window.devicePixelRatio || 1;
         //console.log("id: " + "id_" + pageNo);
-        var canvas = document.getElementById("id_" + pageNo);
+        const canvas = document.getElementById("id_" + pageNo);
         if (canvas) {
-          var ctx = (canvas as HTMLCanvasElement).getContext("2d");
-          var viewport = page.getViewport({
+          const ctx = (canvas as HTMLCanvasElement).getContext("2d");
+          const viewport = page.getViewport({
             scale:
               document.getElementById("canvas_container")!.offsetWidth /
               page.getViewport({ scale: 1.0 }).width,
@@ -186,8 +188,8 @@ class PageDisplayManager {
                 viewport.width
             ) + "px";
 
-          var transform =
-            outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+          /*const transform =
+            outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;*/
 
           if (ctx)
             page
@@ -201,7 +203,7 @@ class PageDisplayManager {
               })
               .then(function (textContent) {
                 // Assign CSS to the textLayer element
-                var textLayer = document.getElementById("tl_" + pageNo);
+                const textLayer = document.getElementById("tl_" + pageNo);
 
                 if (textLayer && canvas) {
                   textLayer.style.left = canvas.offsetLeft + "px";
@@ -209,7 +211,7 @@ class PageDisplayManager {
                   textLayer.style.height = canvas.offsetHeight + "px";
                   textLayer.style.width = canvas.offsetWidth + "px";
                   //const container = document.getElementById("your-container-id");
-                  var viewportScale = viewport.scale;
+                  const viewportScale = viewport.scale;
 
                   textLayer.style.setProperty(
                     "--scale-factor",
@@ -229,7 +231,7 @@ class PageDisplayManager {
                 // Returns a promise, on resolving it will return annotation data of page
                 return page.getAnnotations();
               })
-              .then(function (annotationData) {
+              .then(function (/* annotationData */) {
                 //console.log(JSON.stringify(annotationData));
               });
         }

@@ -1,15 +1,15 @@
 import {
   fileOpen,
-  directoryOpen,
+  /*directoryOpen,
   fileSave,
-  supported,
+  supported,*/
 } from "browser-fs-access";
 
 import * as pdfjsLib from "pdfjs-dist";
 
 import PageDisplayManager from "./PageDisplayManager";
 
-import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
+//import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 
 import IFProps from "./IFileManagerProp";
 
@@ -25,7 +25,7 @@ const FileManager = (props: IFProps) => {
     });
     //console.log("handleClick1");
     const pdf = await blob.arrayBuffer();
-    var loadingTask = pdfjsLib.getDocument(pdf);
+    const loadingTask = pdfjsLib.getDocument(pdf);
     await loadingTask.promise.then((pdf) => {
       PageDisplayManager.currentPdf = pdf;
 

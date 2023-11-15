@@ -3,7 +3,7 @@ import Header from "./Header";
 import Body from "./Body";
 import Footer from "./Footer";
 import TableOfContent from "./TableOfContent";
-import * as pdfjsLib from "pdfjs-dist";
+//import * as pdfjsLib from "pdfjs-dist";
 import { PDFDocumentProxy } from "pdfjs-dist/types/src/display/api";
 import PageDisplayManager from "./PageDisplayManager";
 import HeaderLine1 from "./HeaderLine1";
@@ -28,6 +28,7 @@ function App() {
     setPageMode("load");
     setToggleState(!toggleState);
   };
+
   const updateCurrentPage = () => {
     setCurrentPage(PageDisplayManager.currentPage);
   };
@@ -57,6 +58,7 @@ function App() {
         toggleState={toggleState}
         pageCnt={pdfObj?.numPages}
         updateCurrentPage={updateCurrentPage}
+        setPdfObj={updatePdfObj}
       />
       <Footer />
     </>
