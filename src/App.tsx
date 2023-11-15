@@ -32,6 +32,7 @@ function App() {
   const updateCurrentPage = () => {
     setCurrentPage(PageDisplayManager.currentPage);
   };
+
   return (
     <>
       <Header>

@@ -1,8 +1,6 @@
 import { PDFDocumentProxy } from "pdfjs-dist";
 import * as pdfjsLib from "pdfjs-dist";
 
-//type pageAddr = { [key: string]: number };
-
 class PageDisplayManager {
   public static currentPdf: PDFDocumentProxy | null = null;
   public static displayStackLenght: number = 5; //the number of pages displayed per time
@@ -16,17 +14,10 @@ class PageDisplayManager {
   public static displayStackAdjustmentNumber: number = Math.floor(
     PageDisplayManager.displayStackLenght / 2
   );
-  //public static lastPage: number = 0;
+
   public static currentPage: number = 1;
-  //public static lastScrollPosition: number = 0;
+
   public static pageAddress: { [key: string]: number } = {};
-  //public static observerObject: IntersectionObserver;
-  /*public static observedElem: HTMLCanvasElement = document.getElementById(
-    "id_26"
-  ) as HTMLCanvasElement;
-  public static canvasContainer: HTMLElement = document.getElementById(
-    "canvas_container"
-  ) as HTMLElement;*/
 
   public static updateDisplayedPageNum = (updateCurrentPage: () => void) => {
     const pageCnt = PageDisplayManager.currentPdf!.numPages;
@@ -35,7 +26,7 @@ class PageDisplayManager {
       const pageElem_position = pageElem!.getBoundingClientRect();
       if (pageElem_position.top < window.innerHeight / 2) {
         PageDisplayManager.currentPage = cnt;
-        updateCurrentPage(); //update the displayed current page
+        updateCurrentPage(); //update the displayed current page number
       }
     }
   };
@@ -71,11 +62,10 @@ class PageDisplayManager {
           PageDisplayManager.displayStackAdjustmentNumber;
 
     for (let cnt = 1; cnt <= pageCnt; cnt++) {
-      //let pageContainer = document.getElementById("pc_" + cnt);
       const pageCanvas = document.getElementById(
         "id_" + cnt
       ) as HTMLCanvasElement;
-      //let pageTxtLayer = document.getElementById("tl_" + cnt);
+
       if (
         cnt < PageDisplayManager.displayStackFirstPage ||
         cnt > PageDisplayManager.displayStackLastPage
@@ -113,24 +103,17 @@ class PageDisplayManager {
   };
 
   public static goToPage = (pageRef: number) => {
-    //console.log("pageRef: " + pageRef);
     const page = PageDisplayManager.pageAddress["pa_" + pageRef];
-    //console.log("page: " + page);
-    //console.log("Am In Page No" + PageDisplayManager.pageAddress["pa_" + page]);
 
     if (!page) {
-      //console.log("page undefined");
       return;
     }
     if (
-      /*if page is already in the displayStack*/
       PageDisplayManager.currentPdf!.numPages <=
         PageDisplayManager.displayStackLenght ||
       (page >= PageDisplayManager.displayStackFirstPage &&
         page <= PageDisplayManager.displayStackLastPage)
     ) {
-      //console.log("page1: " + page);
-      //let page2Visit = PageDisplayManager.pageAddress["pa_" + page];
       location.assign("#id_" + page);
       PageDisplayManager.currentPage = page;
     } else {
@@ -152,10 +135,8 @@ class PageDisplayManager {
     pdf
       .getPage(pageNo)
       .then((page) => {
-        //page.render;
-
         const outputScale = window.devicePixelRatio || 1;
-        //console.log("id: " + "id_" + pageNo);
+
         const canvas = document.getElementById("id_" + pageNo);
         if (canvas) {
           const ctx = (canvas as HTMLCanvasElement).getContext("2d");
@@ -210,7 +191,7 @@ class PageDisplayManager {
                   textLayer.style.top = canvas.offsetTop + "px";
                   textLayer.style.height = canvas.offsetHeight + "px";
                   textLayer.style.width = canvas.offsetWidth + "px";
-                  //const container = document.getElementById("your-container-id");
+
                   const viewportScale = viewport.scale;
 
                   textLayer.style.setProperty(

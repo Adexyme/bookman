@@ -46,11 +46,15 @@ const TableOfContent = (props: Props) => {
           <b>Content</b>
         </div>
 
-        <div className="w3-margin-left w3-margin-right w3-margin-bottom ">
+        <div
+          id="toc_container"
+          className="w3-margin-left w3-margin-right w3-margin-bottom "
+        >
+          {props.toggleState}
           {tableOfContent.map((value /*, index*/) => {
             return (
               <div
-                key={value.title}
+                /*key={value.title}*/
                 className="w3-bar-item w3-button w3-border w3-small "
                 onClick={() => {
                   PageDisplayManager.goToPage(value.dest![0].num);

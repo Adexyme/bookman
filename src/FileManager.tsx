@@ -23,12 +23,15 @@ const FileManager = (props: IFProps) => {
     const blob = await fileOpen({
       mimeTypes: ["application/pdf"],
     });
+
     //console.log("handleClick1");
     const pdf = await blob.arrayBuffer();
     const loadingTask = pdfjsLib.getDocument(pdf);
     await loadingTask.promise.then((pdf) => {
       PageDisplayManager.currentPdf = pdf;
-
+      const page1Elem = document.getElementById("id_1");
+      if (page1Elem) page1Elem.scrollIntoView();
+      PageDisplayManager.pageAddress = {};
       props.setPdfObj(pdf);
     });
     //console.log("handleClick2");
